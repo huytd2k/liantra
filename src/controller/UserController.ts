@@ -30,14 +30,33 @@ export class UserController implements RegistableController {
           next: Express.NextFunction
         ) => {
             const user = new User(req.body.username, req.body.password)
+            await user.hashPassword();
+            console.log(user);
+            
           try {
             const resUser = await this.userService.createUser(user);
             return res.json(resUser);
           } catch (err) {
-            next(err);
+            res.status(400).send(err);
           }
         }
-      );
+      )
+      .delete(
+        async (
+          req: Express.Request,
+          res: Express.Response,
+          next: Express.NextFunction
+        ) => {
+          const userID : string = req.body.id ;
+          try {
+            const deleteResult = await this.userService.deleteUser(userID);
+            res.json(deleteResult);
+          }
+          catch(err) {
+            res.status(400).send(err);
+          }
+        }
+      )
 
     return;
   }

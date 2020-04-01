@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 
 export class User{
-    _id?: string;
+    _id!: string;
     username!: string;
     password!: string;
     constructor(username: string, password: string) {
@@ -9,8 +9,9 @@ export class User{
         this.password = password;
 
     };
-    hashPassword() {
-        this.password = bcrypt.hashSync(this.password);
+    async hashPassword() {
+        const hashedPwd =  await bcrypt.hashSync(this.password);
+        this.password = hashedPwd;
     } 
     checkHashedPwdIsValid(uncryptedPwd: string) {
         return bcrypt.compareSync(uncryptedPwd, this.password);

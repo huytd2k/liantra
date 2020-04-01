@@ -9,9 +9,9 @@ export class AuthService{
     @inject(TYPES.UserService) private userService!: UserService;
 
     public async login(postedUser : User) {
-        try {
+        
             const foundUser = await this.userService.findUserbyUsername(postedUser.username);
-            
+            console.log(foundUser);
             if(foundUser.checkHashedPwdIsValid(postedUser.password)) {
                     return jwt.sign({
                         "userId": postedUser._id,
@@ -19,8 +19,9 @@ export class AuthService{
                         "password": postedUser.password
                     }, "Secret", {expiresIn: "1h"});
                 }
-        } catch(err) {
-            throw Error("Invalid identity!");
-        }
+            else {
+                throw Error("Invalid Identiy")
+            }
+         
     }
 }

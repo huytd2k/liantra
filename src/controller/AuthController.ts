@@ -20,7 +20,7 @@ export default class AuthController implements RegistableController {
                         res.json(token);
                     }
                     catch(err) {
-                        res.status(400);
+                        res.status(400).send("Error");
                     }
                 }
             )

@@ -5,13 +5,16 @@ import {
   createConnection,
   Connection,
   Repository,
-  ConnectionOptions
+  ConnectionOptions,
+  DeleteResult
 } from "typeorm";
 
 export interface UserRepository {
   findAll(): Promise<UserDTO[]>;
   create(userDTO: UserDTO): Promise<UserDTO>;
   findUserByUsername(username: string): Promise<UserDTO>;
+  findUserById(id: string): Promise<UserDTO>;
+  deleteUser(userDTO : UserDTO): Promise<DeleteResult>;
 }
 @injectable()
 export class UserRepositoryImpPg implements UserRepository {
@@ -27,14 +30,24 @@ export class UserRepositoryImpPg implements UserRepository {
       console.log("Error while connecting to database !");
     }
   }
+  async findUserById(id: string): Promise<UserDTO> {
+      return await this.UserRepositoryFromTypeOrm.findOneOrFail({_id: id});
+  }
   public async findAll(): Promise<UserDTO[]> {
     return await this.UserRepositoryFromTypeOrm.find();
   }
   public async create(userDTO: UserDTO): Promise<UserDTO> {
+    const existedUser = await this.UserRepositoryFromTypeOrm.findOne({username: userDTO.username})
+    if (existedUser) {
+      throw Error("invalid username!")
+    }
     return await this.UserRepositoryFromTypeOrm.save(userDTO);
   }
   public async findUserByUsername(queryUsername: string): Promise<UserDTO> {
     return await this.UserRepositoryFromTypeOrm.findOneOrFail({username: queryUsername});
+  }
+  public async deleteUser(userDTO: UserDTO) : Promise<DeleteResult> {
+    return await this.UserRepositoryFromTypeOrm.delete(userDTO);
   }
   public connect(): Promise<Connection> {
     return createConnection({
