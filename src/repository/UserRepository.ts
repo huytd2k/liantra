@@ -16,6 +16,9 @@ export interface UserRepository {
   findUserById(id: string): Promise<UserDTO>;
   deleteUser(userDTO : UserDTO): Promise<DeleteResult>;
 }
+
+
+
 @injectable()
 export class UserRepositoryImpPg implements UserRepository {
   private UserRepositoryFromTypeOrm!: Repository<UserPgSchema>;
@@ -56,9 +59,7 @@ export class UserRepositoryImpPg implements UserRepository {
       port: 5432,
       username: "mike",
       password: "huy221100",
-      database: "postgres",
-      entities: [UserPgSchema],
-      synchronize: true
-    });
+      database: "liantra",
+      entities: [UserPgSchema]    });
   }
 }

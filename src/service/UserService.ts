@@ -49,17 +49,18 @@ export class UserServiceIpml implements UserService {
   }  
 
   public dtoToUser(userDTO: UserDTO): User {
-    return new User(userDTO.username, userDTO.password);
+    return new User(userDTO.username, userDTO.password, userDTO.role);
   }
   
   
   public userToDTO(user: User): UserDTO {
     return {
       username: user.username,
-      password: user.password
+      password: user.password,
+      role: user.role
     };
-  }
 
 
 
+}
 }

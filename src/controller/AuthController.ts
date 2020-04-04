@@ -14,7 +14,7 @@ export default class AuthController implements RegistableController {
         app.route('/auth')
             .post(
                 async (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-                    const postedAcount = new User(req.body.username, req.body.password)
+                    const postedAcount = new User(req.body.username, req.body.password, undefined);
                     try {
                         const token = await this.authService.login(postedAcount);
                         res.json(token);

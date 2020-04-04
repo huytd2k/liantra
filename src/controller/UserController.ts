@@ -1,3 +1,4 @@
+import { ValidateJwt } from './../middleware/ValidateJwt';
 import { User } from './../model/User';
 import { RegistableController } from "./RegistableController";
 import { UserService } from "./../service/UserService";
@@ -8,11 +9,13 @@ import TYPES from "../types";
 @injectable()
 export class UserController implements RegistableController {
   @inject(TYPES.UserService) private userService!: UserService;
-
+  @inject(TYPES.ValidateJwt) private validateJwt!: ValidateJwt;
+  
+  
   register(app: Express.Application): void {
     app
       .route("/user/")
-      .get(
+      .get([this.validateJwt.check],
         async (
           req: Express.Request,
           res: Express.Response,
@@ -29,7 +32,7 @@ export class UserController implements RegistableController {
           res: Express.Response,
           next: Express.NextFunction
         ) => {
-            const user = new User(req.body.username, req.body.password)
+            const user = new User(req.body.username, req.body.password, req.body.role)
             await user.hashPassword();
             console.log(user);
             
