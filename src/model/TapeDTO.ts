@@ -1,18 +1,21 @@
 import {Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
 
 
-export class TapeDTO{
-    _id?: string;
-    ytUrl!: string;
-    description!: string;
-    sciprt!: string;
+export interface TapeDTO{
+    id?: string;
+    title: string;
+    ytUrl: string;
+    description: string;
+    script: string;
 }
 
 @Entity('tape')
 export class TapePgSchema implements TapeDTO {
     @PrimaryGeneratedColumn()
-    public _id?: string;
+    public id?: string;
     
+    @Column()
+    public title!: string;
     
     @Column()
     public ytUrl!: string;
@@ -22,5 +25,5 @@ export class TapePgSchema implements TapeDTO {
     public description!: string;
 
     @Column()
-    public sciprt!: string;
+    public script!: string;
 }

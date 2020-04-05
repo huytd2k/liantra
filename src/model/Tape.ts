@@ -1,6 +1,7 @@
 export class Tape {
-    id!: string;
-    ytLink!: string;
+    id?: string;
+    title!: string;
+    ytUrl!: string;
     description!: string;
     script!: string
 }

@@ -1,3 +1,4 @@
+import { TapeServiceImpl, TapeService } from './service/TapeService';
 import { TapeRepository, TapeRepositoryImpPg } from './repository/TapeRepository';
 import { AuthService } from './service/AuthService';
 import { UserRepository, UserRepositoryImpPg } from './repository/UserRepository';
@@ -8,6 +9,7 @@ import {UserController} from './controller/UserController';
 import { UserService, UserServiceIpml } from './service/UserService';
 import AuthController from './controller/AuthController';
 import { ValidateJwt } from './middleware/ValidateJwt';
+import TapeController from './controller/TapeController';
 
 const myContainer = new Container();
 
@@ -17,7 +19,9 @@ myContainer.bind<UserRepository>(TYPES.UserRepository).to(UserRepositoryImpPg);
 myContainer.bind<TapeRepository>(TYPES.TapeRepository).to(TapeRepositoryImpPg);
 myContainer.bind<UserService>(TYPES.UserService).to(UserServiceIpml);
 myContainer.bind<RegistableController>(TYPES.RegistableController).to(AuthController);
+myContainer.bind<TapeController>(TYPES.RegistableController).to(TapeController);
 myContainer.bind<AuthService>(TYPES.AuthService).to(AuthService);
+myContainer.bind<TapeService>(TYPES.TapeService).to(TapeServiceImpl);
 myContainer.bind<ValidateJwt>(TYPES.ValidateJwt).to(ValidateJwt);
 
 

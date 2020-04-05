@@ -49,7 +49,8 @@ export class TapeRepositoryImpPg implements TapeRepository{
             username: "mike",
             password: "huy221100",
             database: "liantra",
-            entities: [TapePgSchema]    });
+            entities: [TapePgSchema],
+        synchronize: true    });
         }
     
     
@@ -57,8 +58,12 @@ export class TapeRepositoryImpPg implements TapeRepository{
     public async getAll(): Promise<TapeDTO[]> {
         return await this.tapeRepositoryFromTypeOrm.find()
     }
-    findTapeById(queryString: string): Promise<TapeDTO> {
-        throw new Error("Method not implemented.");
+    public async findTapeById(queryString: string): Promise<TapeDTO> {
+        try {
+            return await this.tapeRepositoryFromTypeOrm.findOneOrFail({id: queryString})
+        } catch(err) {
+            throw new Error('Not Found!')
+        };
     }
     findTapeByTitle(queryString: string): Promise<TapeDTO[]> {
         throw new Error("Method not implemented.");
