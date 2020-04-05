@@ -15,7 +15,7 @@ export class UserController implements RegistableController {
   register(app: Express.Application): void {
     app
       .route("/user/")
-      .get([this.validateJwt.check],
+      .get(
         async (
           req: Express.Request,
           res: Express.Response,

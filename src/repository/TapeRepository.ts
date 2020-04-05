@@ -6,7 +6,8 @@ import {
   Connection,
   Repository,
   ConnectionOptions,
-  DeleteResult
+  DeleteResult,
+  Like
 } from "typeorm";
 
 
@@ -65,8 +66,11 @@ export class TapeRepositoryImpPg implements TapeRepository{
             throw new Error('Not Found!')
         };
     }
-    findTapeByTitle(queryString: string): Promise<TapeDTO[]> {
-        throw new Error("Method not implemented.");
+    public async findTapeByTitle(queryString: string): Promise<TapeDTO[]> {
+        const foundDTO = await this.tapeRepositoryFromTypeOrm.createQueryBuilder("tape")
+                                                                .where("LOWER(title) like :title", {title: '%'+queryString.toLowerCase()+'%'})
+                                                                .getMany();
+        return foundDTO;
     }
 
 }

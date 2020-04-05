@@ -8,7 +8,7 @@ import { DeleteResult } from "typeorm";
 export interface TapeService {
   getAllTape(): Promise<Tape[]>;
   createTape(tape: Tape): Promise<Tape>;
-  findTapebyTitle(titleQuery: string): Promise<Tape>;
+  findTapebyTitle(titleQuery: string): Promise<Tape[]>;
   findTapebyId(id: string) : Promise<Tape>;
   deleteTapeById(id: string): Promise<DeleteResult> ;
 }
@@ -29,9 +29,11 @@ export class TapeServiceImpl implements TapeService {
         const foundDTO = await this.tapeRepository.findTapeById(id);
         return this.dtoToTape(foundDTO);
     }
-    findTapebyTitle(titleQuery: string): Promise<Tape> {
-        throw new Error("Method not implemented.");
-    }
+    public async findTapebyTitle(titleQuery: string): Promise<Tape[]> {
+            const foundDtos = await this.tapeRepository.findTapeByTitle(titleQuery)
+            const tapes = foundDtos.map((dto) => this.dtoToTape(dto));
+            return tapes}
+        
     public async deleteTapeById(id: string): Promise<DeleteResult> {
         return await this.tapeRepository.deleteTapebyId(id)
     }

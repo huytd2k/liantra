@@ -27,7 +27,9 @@ export default class TapeController implements RegistableController {
             )
             .get(
                 async (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-                    const tapes = await this.tapeService.getAllTape();
+                    const queryTitle = req.query.title ? req.query.title : "";
+                
+                    const tapes = await this.tapeService.findTapebyTitle(queryTitle);
                     res.json(tapes);
                 }
             );
