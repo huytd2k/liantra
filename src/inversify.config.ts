@@ -1,3 +1,4 @@
+import { CheckRole } from './middleware/CheckRole';
 import { TapeServiceImpl, TapeService } from './service/TapeService';
 import { TapeRepository, TapeRepositoryImpPg } from './repository/TapeRepository';
 import { AuthService } from './service/AuthService';
@@ -23,6 +24,6 @@ myContainer.bind<TapeController>(TYPES.RegistableController).to(TapeController);
 myContainer.bind<AuthService>(TYPES.AuthService).to(AuthService);
 myContainer.bind<TapeService>(TYPES.TapeService).to(TapeServiceImpl);
 myContainer.bind<ValidateJwt>(TYPES.ValidateJwt).to(ValidateJwt);
-
+myContainer.bind<CheckRole>(TYPES.CheckRole).to(CheckRole);
 
 export default myContainer;

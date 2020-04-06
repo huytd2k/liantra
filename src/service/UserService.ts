@@ -10,12 +10,18 @@ export interface UserService {
   createUser(user: User): Promise<User>;
   findUserbyUsername(username: string): Promise<User>;
   deleteUser(id: string): Promise<DeleteResult> ;
+  findUserById(id: string): Promise<User>;
 }
 @injectable()
 export class UserServiceIpml implements UserService {
   @inject(TYPES.UserRepository) private userRepository! : UserRepository;
   
-  
+  public async findUserById(id: string) : Promise<User> {
+    const foundDto = await this.userRepository.findUserById(id);
+    return this.dtoToUser(foundDto);
+  }  
+
+
   public async findUserbyUsername(username: string): Promise<User> {
     const foundUserDTO = await this.userRepository.findUserByUsername(username);
     return this.dtoToUser(foundUserDTO); //* Convert   }

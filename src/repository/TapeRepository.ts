@@ -1,13 +1,14 @@
 import { TapeDTO, TapePgSchema } from "./../model/TapeDTO";
 import { Tape } from "./../model/Tape";
-import { injectable } from "inversify";
+import { injectable, id } from "inversify";
 import {
   createConnection,
   Connection,
   Repository,
   ConnectionOptions,
   DeleteResult,
-  Like
+  Like,
+  DeleteQueryBuilder
 } from "typeorm";
 
 
@@ -36,8 +37,8 @@ export class TapeRepositoryImpPg implements TapeRepository{
     public async createTape(tapeDTO: TapeDTO): Promise<TapeDTO> {
         return await this.tapeRepositoryFromTypeOrm.save(tapeDTO);
     }
-    deleteTapebyId(queryId: string): Promise<DeleteResult> {
-        throw new Error("Method not implemented.");
+    public async deleteTapebyId(queryId: string): Promise<DeleteResult>{
+         return await this.tapeRepositoryFromTypeOrm.createQueryBuilder("tape").delete().where("tape.id = :id", {id: queryId}).execute()
     }
     updateTape(tapeDTO: TapeDTO): Promise<TapeDTO> {
         throw new Error("Method not implemented.");

@@ -3,7 +3,7 @@ import { TapeRepository } from "./../repository/TapeRepository";
 import { Tape } from "./../model/Tape";
 import { injectable, inject } from "inversify";
 import TYPES from "../types";
-import { DeleteResult } from "typeorm";
+import { DeleteResult, DeleteQueryBuilder } from "typeorm";
 
 export interface TapeService {
   getAllTape(): Promise<Tape[]>;
@@ -41,6 +41,7 @@ export class TapeServiceImpl implements TapeService {
         return {
             id: tapeDTO.id,
             title: tapeDTO.title,
+            level: tapeDTO.level,
             description: tapeDTO.description,
             script: tapeDTO.script,
             ytUrl: tapeDTO.ytUrl
@@ -50,6 +51,7 @@ public tapeToDTO(tape : Tape) {
         return {
             id: tape.id,
             title: tape.title,
+            level: tape.level,
             description: tape.description,
             script: tape.script,
             ytUrl: tape.ytUrl

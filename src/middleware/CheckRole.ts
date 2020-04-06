@@ -1,18 +1,21 @@
 import { UserService } from './../service/UserService';
-import { ROLE } from './../model/Role';
-import { inject } from 'inversify';
+import  {ROLE}  from './../model/Role';
+import { inject, injectable } from 'inversify';
 import TYPES from '../types';
 import {Request, Response, NextFunction} from "express"
 import { json } from 'body-parser';
 
+
+@injectable()
 export class CheckRole {
-    @inject(TYPES.UserRepository) private userService! : UserService; 
+    @inject(TYPES.UserService) private userService! : UserService; 
 
     public check(roles: Array<ROLE>) : any {
         return async (req: Request, res: Response, next: NextFunction) => {
-            const username = res.locals.username;
+            const username :string = res.locals.jwtPayload.username;
             try {
             const foundUserFromRepo = await this.userService.findUserbyUsername(username); //* Get an user domain object with locals username
+            console.log("CheckRole -> foundUserFromRepo", foundUserFromRepo)
             if ( roles.indexOf( foundUserFromRepo.role) > -1) { //* check if user role in required roles
                     next();
                 }

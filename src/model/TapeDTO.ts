@@ -4,6 +4,7 @@ import {Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
 export interface TapeDTO{
     id?: string;
     title: string;
+    level: number;
     ytUrl: string;
     description: string;
     script: string;
@@ -20,7 +21,9 @@ export class TapePgSchema implements TapeDTO {
     @Column()
     public ytUrl!: string;
     
-    
+    @Column()
+    public level!: number;
+
     @Column()
     public description!: string;
 

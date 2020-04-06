@@ -6,7 +6,8 @@ import {
   Connection,
   Repository,
   ConnectionOptions,
-  DeleteResult
+  DeleteResult,
+  FindOneOptions
 } from "typeorm";
 
 export interface UserRepository {
@@ -34,7 +35,7 @@ export class UserRepositoryImpPg implements UserRepository {
     }
   }
   async findUserById(id: string): Promise<UserDTO> {
-      return await this.UserRepositoryFromTypeOrm.findOneOrFail({_id: id});
+      return await this.UserRepositoryFromTypeOrm.findOneOrFail(id, {select: ["_id","username"]});
   }
   public async findAll(): Promise<UserDTO[]> {
     return await this.UserRepositoryFromTypeOrm.find();
@@ -47,7 +48,7 @@ export class UserRepositoryImpPg implements UserRepository {
     return await this.UserRepositoryFromTypeOrm.save(userDTO);
   }
   public async findUserByUsername(queryUsername: string): Promise<UserDTO> {
-    return await this.UserRepositoryFromTypeOrm.findOneOrFail({username: queryUsername});
+    return await this.UserRepositoryFromTypeOrm.findOneOrFail();
   }
   public async deleteUser(userDTO: UserDTO) : Promise<DeleteResult> {
     return await this.UserRepositoryFromTypeOrm.delete(userDTO);
@@ -60,6 +61,6 @@ export class UserRepositoryImpPg implements UserRepository {
       username: "mike",
       password: "huy221100",
       database: "liantra",
-      entities: [UserPgSchema]    });
+      entities: [UserPgSchema] });
   }
 }
