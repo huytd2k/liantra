@@ -1,16 +1,10 @@
 import { TapeDTO, TapePgSchema } from "./../model/TapeDTO";
-import { Tape } from "./../model/Tape";
 import { injectable, id } from "inversify";
 import {
-  createConnection,
-  Connection,
   Repository,
-  ConnectionOptions,
   DeleteResult,
-  Like,
-  DeleteQueryBuilder
 } from "typeorm";
-
+import {RepositoryClass} from './Repository.class'
 
 export interface TapeRepository {
     getAll() : Promise<TapeDTO[]>;
@@ -21,9 +15,10 @@ export interface TapeRepository {
     updateTape(tapeDTO: TapeDTO): Promise<TapeDTO>;
 }
 @injectable()
-export class TapeRepositoryImpPg implements TapeRepository{
+export class TapeRepositoryImpPg extends RepositoryClass implements TapeRepository{
     private tapeRepositoryFromTypeOrm!: Repository<TapeDTO>;
     constructor() {
+        super()
         try {
             (async () => {
                 const conection = await this.connect();
@@ -43,18 +38,6 @@ export class TapeRepositoryImpPg implements TapeRepository{
     updateTape(tapeDTO: TapeDTO): Promise<TapeDTO> {
         throw new Error("Method not implemented.");
     }
-    connect(): Promise<Connection> {
-        return createConnection({
-            type: "postgres",
-            host: "localhost",
-            port: 5432,
-            username: "mike",
-            password: "huy221100",
-            database: "liantra",
-            entities: [TapePgSchema],
-        synchronize: true    });
-        }
-    
     
     
     public async getAll(): Promise<TapeDTO[]> {

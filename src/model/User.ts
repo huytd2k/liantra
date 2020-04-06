@@ -1,6 +1,6 @@
 import { ROLE } from './Role';
 import * as bcrypt from 'bcryptjs';
-import {Length, IsEmail, IsNotEmpty,} from "class-validator";
+import {Length , IsNotEmpty,} from "class-validator";
 
 
 

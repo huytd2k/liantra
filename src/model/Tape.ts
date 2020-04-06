@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, Contains } from "class-validator";
+import { IsNotEmpty , Contains } from "class-validator";
 
 export class Tape {
     id?: string;

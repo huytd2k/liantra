@@ -1,13 +1,14 @@
-import { RegistableController } from './controller/RegistableController';
+import { RegistableController } from "./controller/RegistableController";
 import express from "express";
-import bodyParser from 'body-parser';
+import bodyParser from "body-parser";
 import TYPES from "./types";
-import {Container} from 'inversify';
-import "reflect-metadata"
-
+import "reflect-metadata";
+import * as dotenv from "dotenv";
 
 const app = express();
-import myContainer from './inversify.config';
+
+dotenv.config();
+import myContainer from "./inversify.config";
 app.use(bodyParser()); //* Use body parser to get JSON body
 
 

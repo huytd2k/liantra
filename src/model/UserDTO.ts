@@ -22,6 +22,6 @@ export class UserPgSchema implements UserDTO {
     @Column()
     public password!: string;
 
-    @Column()
+    @Column({type: 'varchar'})
     public role!: ROLE;
 }

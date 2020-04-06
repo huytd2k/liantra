@@ -1,14 +1,10 @@
 import { UserDTO, UserPgSchema } from "./../model/UserDTO";
-import { User } from "./../model/User";
 import { injectable } from "inversify";
 import {
-  createConnection,
-  Connection,
   Repository,
-  ConnectionOptions,
   DeleteResult,
-  FindOneOptions
 } from "typeorm";
+import {RepositoryClass} from './Repository.class'
 
 export interface UserRepository {
   findAll(): Promise<UserDTO[]>;
@@ -21,10 +17,11 @@ export interface UserRepository {
 
 
 @injectable()
-export class UserRepositoryImpPg implements UserRepository {
+export class UserRepositoryImpPg extends RepositoryClass implements UserRepository {
   private UserRepositoryFromTypeOrm!: Repository<UserPgSchema>;
 
   constructor() {
+    super();
     try {
       (async () => {
         const connection = await this.connect();
@@ -52,15 +49,5 @@ export class UserRepositoryImpPg implements UserRepository {
   }
   public async deleteUser(userDTO: UserDTO) : Promise<DeleteResult> {
     return await this.UserRepositoryFromTypeOrm.delete(userDTO);
-  }
-  public connect(): Promise<Connection> {
-    return createConnection({
-      type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "mike",
-      password: "huy221100",
-      database: "liantra",
-      entities: [UserPgSchema] });
   }
 }
