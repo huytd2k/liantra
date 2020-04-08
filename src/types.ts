@@ -8,5 +8,7 @@ const TYPES = {
 	TapeRepository: Symbol("TapeRepository"),
 	TapeService: Symbol("TapeService"),
 	CheckRole: Symbol("CheckRole"),
+	TapeResolver: Symbol("TapeResolver"),
+	Connection: Symbol("Connection"),
 };
 export default TYPES;

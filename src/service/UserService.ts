@@ -29,7 +29,7 @@ export class UserServiceIpml implements UserService {
   }
   
   public async getAllUser(): Promise<User[]> {
-        const userDtoFromRepo = await this.userRepository.findAll();
+        const userDtoFromRepo = await this.userRepository.getAll();
         const users = userDtoFromRepo.map((userDTO: UserDTO) =>
           this.dtoToUser(userDTO)
         );

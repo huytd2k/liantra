@@ -1,16 +1,19 @@
+import { Connection } from 'typeorm';
+import { TapeResolver } from './resolver/TapeResolver';
 import { CheckRole } from "./middleware/CheckRole";
 import { TapeServiceImpl, TapeService } from "./service/TapeService";
 import { TapeRepository, TapeRepositoryImpPg } from "./repository/TapeRepository";
 import { AuthService } from "./service/AuthService";
 import { UserRepository, UserRepositoryImpPg } from "./repository/UserRepository";
 import { RegistableController } from "./controller/RegistableController";
-import { Container } from "inversify";
+import { Container, interfaces } from "inversify";
 import TYPES from "./types";
 import {UserController} from "./controller/UserController";
 import { UserService, UserServiceIpml } from "./service/UserService";
 import AuthController from "./controller/AuthController";
 import { ValidateJwt } from "./middleware/ValidateJwt";
 import TapeController from "./controller/TapeController";
+import { PgConnection } from './util/PgConnection';
 
 const myContainer = new Container();
 
@@ -24,5 +27,6 @@ myContainer.bind<AuthService>(TYPES.AuthService).to(AuthService);
 myContainer.bind<TapeService>(TYPES.TapeService).to(TapeServiceImpl);
 myContainer.bind<ValidateJwt>(TYPES.ValidateJwt).to(ValidateJwt);
 myContainer.bind<CheckRole>(TYPES.CheckRole).to(CheckRole);
-
+myContainer.bind<TapeResolver>(TYPES.TapeResolver).to(TapeResolver);
+myContainer.bind<PgConnection>(TYPES.Connection).to(PgConnection);
 export default myContainer;
