@@ -10,7 +10,7 @@ export interface TapeService {
   createTape(tape: Tape): Promise<Tape>;
   findTapebyTitle(titleQuery: string): Promise<Tape[]>;
   findTapebyId(id: string) : Promise<Tape>;
-  deleteTapeById(id: string): Promise<DeleteResult> ;
+  deleteTapeById(id: number): Promise<DeleteResult> ;
 }
 
 @injectable()
@@ -34,7 +34,7 @@ export class TapeServiceImpl implements TapeService {
             const tapes = foundDtos.map((dto) => this.dtoToTape(dto));
             return tapes}
         
-    public async deleteTapeById(id: string): Promise<DeleteResult> {
+    public async deleteTapeById(id: number): Promise<DeleteResult> {
         return await this.tapeRepository.deleteTapebyId(id)
     }
     public dtoToTape(tapeDTO : TapeDTO) : Tape{

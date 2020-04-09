@@ -1,12 +1,13 @@
-import { Connection } from 'typeorm';
-import { RegistableController } from "./controller/RegistableController";
-import express from "express";
+import { ApolloServer } from 'apollo-server-express';
 import bodyParser from "body-parser";
-import TYPES from "./types";
-import "reflect-metadata";
 import * as dotenv from "dotenv";
-import { ApolloServer } from 'apollo-server-express'
-
+import express from "express";
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { AuthResoler } from './graphql/resolver/AuthResolver';
+import { TapeResolver } from './graphql/resolver/TapeResolver';
+import { UserResolver } from './graphql/resolver/UserResolver';
+import myContainer from "./inversify.config";
 
 const cors = require("cors");
 const app = express();
@@ -15,20 +16,16 @@ app.use(bodyParser());
 app.options("*", cors()); // include before other routes
 
 dotenv.config();
-import myContainer from "./inversify.config";
-import { buildSchema } from "type-graphql";
 
 
 
-
-const controllers: RegistableController[] = myContainer.getAll<RegistableController>(TYPES.RegistableController);
-controllers.forEach(controller => controller.register(app));
 
 (async () => {
     const apolloServer = new ApolloServer({
         schema: await buildSchema(
             {
-                resolvers: ["./resolver/TapeResolver"]
+                resolvers: [TapeResolver, UserResolver, AuthResoler],
+                container: myContainer
             }
         ),
         context: ({req, res}) => ({req, res})

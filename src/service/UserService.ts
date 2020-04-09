@@ -55,7 +55,7 @@ export class UserServiceIpml implements UserService {
   }  
 
   public dtoToUser(userDTO: UserDTO): User {
-    return new User(userDTO.username, userDTO.password, userDTO.role);
+    return new User(userDTO.username, userDTO.password, userDTO.role, userDTO.email);
   }
   
   
@@ -63,7 +63,8 @@ export class UserServiceIpml implements UserService {
     return {
       username: user.username,
       password: user.password,
-      role: user.role
+      role: user.role,
+      email: user.email
     };
 
 

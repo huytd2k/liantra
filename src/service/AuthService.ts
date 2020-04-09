@@ -8,15 +8,15 @@ import * as jwt from 'jsonwebtoken';
 export class AuthService{
     @inject(TYPES.UserService) private userService!: UserService;
 
-    public async login(postedUser : User) {
+    public async login(username: string, password: string) {
         
-            const foundUser = await this.userService.findUserbyUsername(postedUser.username);
+            const foundUser = await this.userService.findUserbyUsername(username);
             console.log(foundUser);
-            if(foundUser.checkHashedPwdIsValid(postedUser.password)) {
+            if(foundUser.checkHashedPwdIsValid(password)) {
                     return jwt.sign({
-                        "userId": postedUser._id,
-                        "username": postedUser.username,
-                        "password": postedUser.password
+                        "userId": foundUser._id,
+                        "username": foundUser.username,
+                        "password": foundUser.password,
                     }, "Secret", {expiresIn: "1h"});
                 }
             else {

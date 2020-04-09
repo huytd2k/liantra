@@ -1,11 +1,7 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
-import { UserDTO, UserPgSchema } from "./../model/UserDTO";
 import { injectable } from "inversify";
-import {
-	Repository,
-	DeleteResult,
-} from "typeorm";
-import { RepositoryClass } from './Repository.class'
+import { DeleteResult, Repository } from "typeorm";
+import { UserDTO, UserPgSchema } from "./../model/UserDTO";
+import { PgConnection } from './../util/PgConnection';
 
 export interface UserRepository {
   getAll(): Promise<UserDTO[]>;
@@ -18,39 +14,36 @@ export interface UserRepository {
 
 
 @injectable()
-export class UserRepositoryImpPg extends RepositoryClass implements UserRepository {
-  private UserRepositoryFromTypeOrm!: Repository<UserPgSchema>;
+export class UserRepositoryImpPg  implements UserRepository {
+  private userRepositoryFromTypeOrm!: Repository<UserPgSchema>;
 
-  constructor () {
-  	super();
-  	try {
-  		(async () => {
-  			const connection = await this.connect();
-  			this.UserRepositoryFromTypeOrm = connection.getRepository(UserPgSchema);
-  		})();
-  	} catch (err) {
-  		console.log("Error while connecting to database !");
-  	}
-  }
+
+	constructor() {
+		(async () => {
+		const connection = await PgConnection.getConnection();
+		this.userRepositoryFromTypeOrm =  connection.getRepository(UserPgSchema);
+		})();
+	}
+
   async findUserById (id: string): Promise<UserDTO> {
-  	return await this.UserRepositoryFromTypeOrm.findOneOrFail(id, { select: ["_id", "username"] });
+  	return await this.userRepositoryFromTypeOrm.findOneOrFail(id, { select: ["_id", "username"] });
   }
   public async getAll (): Promise<UserDTO[]> {
-  	return await this.UserRepositoryFromTypeOrm.find();
+  	return await this.userRepositoryFromTypeOrm.find();
   }
   public async create (userDTO: UserDTO): Promise<UserDTO> {
-  	const existedUser = await this.UserRepositoryFromTypeOrm.findOne({ username: userDTO.username })
+  	const existedUser = await this.userRepositoryFromTypeOrm.findOne({ username: userDTO.username })
   	if (existedUser) {
   		throw Error("invalid username!")
   	}
-  	return await this.UserRepositoryFromTypeOrm.save(userDTO);
+  	return await this.userRepositoryFromTypeOrm.save(userDTO);
   }
 
   public async findUserByUsername (queryUsername: string): Promise<UserDTO> {
-  	return await this.UserRepositoryFromTypeOrm.findOneOrFail({username: queryUsername});
+  	return await this.userRepositoryFromTypeOrm.findOneOrFail({username: queryUsername});
   }
   
   public async deleteUser (userDTO: UserDTO): Promise<DeleteResult> {
-  	return await this.UserRepositoryFromTypeOrm.delete(userDTO);
+  	return await this.userRepositoryFromTypeOrm.delete(userDTO);
   }
 }

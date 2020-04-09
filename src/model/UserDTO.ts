@@ -6,6 +6,7 @@ export class UserDTO{
     _id?: string;
     username!: string;
     password!: string;
+    email!: string;
     role!: ROLE;
 }
 
@@ -14,6 +15,8 @@ export class UserPgSchema implements UserDTO {
     @PrimaryGeneratedColumn()
     public _id?: string;
     
+    @Column()
+    public email!: string;
     
     @Column()
     public username!: string;
