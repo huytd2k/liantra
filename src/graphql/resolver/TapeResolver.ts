@@ -1,6 +1,9 @@
+import { ValidateTapeArgs } from './../../middleware/ValidateTapeArgs';
+import { TapeInput } from './../type/input/TapeInput';
+import { CreateTapeResponse } from './../type/response/CreateTapeResponse';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { Tape } from '../../model/Tape';
 import { TapeService } from '../../service/TapeService';
 import TYPES from '../../types';
@@ -25,6 +28,21 @@ export class TapeResolver implements Resolver{
         const result = await this.tapeService.deleteTapeById(id);
         return result;
         return false;
+    }
+    @Mutation(() => CreateTapeResponse) 
+    async add(@Arg("tape") tape: TapeInput) : Promise<CreateTapeResponse> {
+       try {
+           const resTape = await this.tapeService.createTape(tape);
+           return {
+               isOk: true,
+               tapeInfo: resTape,
+           }
+       } catch(err) {
+           return {
+               isOk: false,
+               error: err.message,
+           }
+       }
     }
 }
 export interface Resolver {

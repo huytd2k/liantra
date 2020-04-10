@@ -1,6 +1,5 @@
 import { injectable } from "inversify";
-import { DeleteResult, Repository } from "typeorm";
-import { PgConnection } from '../util/PgConnection';
+import { DeleteResult, getRepository, Repository } from "typeorm";
 import { TapeDTO, TapePgSchema } from "./../model/TapeDTO";
 
 export interface TapeRepository {
@@ -17,8 +16,7 @@ export class TapeRepositoryImpPg implements TapeRepository{
 
 	constructor() {
 		(async () => {
-		const connection = await PgConnection.getConnection();
-		this.tapeRepositoryFromTypeOrm =  connection.getRepository(TapePgSchema);
+		this.tapeRepositoryFromTypeOrm =  getRepository(TapePgSchema);
 		})();
 	}
 

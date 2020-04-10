@@ -1,7 +1,6 @@
 import { injectable } from "inversify";
-import { DeleteResult, Repository } from "typeorm";
+import { DeleteResult, getRepository, Repository } from "typeorm";
 import { UserDTO, UserPgSchema } from "./../model/UserDTO";
-import { PgConnection } from './../util/PgConnection';
 
 export interface UserRepository {
   getAll(): Promise<UserDTO[]>;
@@ -15,15 +14,14 @@ export interface UserRepository {
 
 @injectable()
 export class UserRepositoryImpPg  implements UserRepository {
-  private userRepositoryFromTypeOrm!: Repository<UserPgSchema>;
-
+  private userRepositoryFromTypeOrm!: Repository<UserDTO>;
 
 	constructor() {
 		(async () => {
-		const connection = await PgConnection.getConnection();
-		this.userRepositoryFromTypeOrm =  connection.getRepository(UserPgSchema);
+		this.userRepositoryFromTypeOrm =  getRepository(UserPgSchema);
 		})();
 	}
+
 
   async findUserById (id: string): Promise<UserDTO> {
   	return await this.userRepositoryFromTypeOrm.findOneOrFail(id, { select: ["_id", "username"] });
