@@ -16,6 +16,6 @@ export class Auth implements MiddlewareInterface<ApolloContext> {
 export const customAuthChecker: AuthChecker<ApolloContext> = ({context}, roles) => {
     const userRole = context.req.session!.userRole;
     if(!userRole) return false;
-    if(roles.indexOf(userRole) > -1) return true;
+    if(roles.indexOf(userRole) > -1) return true ;
     return false;
 }
