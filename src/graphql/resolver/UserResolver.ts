@@ -1,9 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import TYPES from '../../types';
 import { RegisterUserInput } from '../type/input/UserInput';
 import { RegisterReponse } from '../type/response/RegisterReponse';
-import { Auth } from './../../middleware/Auth';
 import { ROLE } from './../../model/Role';
 import { User } from './../../model/User';
 import { UserService } from './../../service/UserService';
@@ -37,7 +36,6 @@ export class UserResolver {
             }
         }
     }
-    @UseMiddleware(Auth)
     @Query(type => User)
     async me(@Ctx() ctx: ApolloContext): Promise<User> {
         try {
