@@ -40,8 +40,8 @@ export class UserServiceIpml implements UserService {
   
   public async createUser(user: User): Promise<User> {
         const userDto = this.userToDTO(user);
-        const postBackUserDTO = await this.userRepository.create(userDto)
-        return this.dtoToUser(postBackUserDTO);
+        const resUserDTO = await this.userRepository.create(userDto)
+        return this.dtoToUser(resUserDTO);
   }
   
   public async deleteUser(id: string): Promise<DeleteResult> {

@@ -7,15 +7,15 @@ import 'reflect-metadata'
 
 @injectable()
 export class Auth implements MiddlewareInterface<ApolloContext> {
-    async use({args, context}: ResolverData<ApolloContext>, next : NextFn)  {
+    async use({context}: ResolverData<ApolloContext>, next : NextFn)  {
         if (!context.req.session!.uid) return new AuthenticationError("You don't have permission to access this data!")
         await next();
     }
 }
 
-export const customAuthChecker: AuthChecker<ApolloContext> = ({args, info, context, root}, roles) => {
+export const customAuthChecker: AuthChecker<ApolloContext> = ({context}, roles) => {
     const userRole = context.req.session!.userRole;
-    if(userRole) return false;
+    if(!userRole) return false;
     if(roles.indexOf(userRole) > -1) return true;
     return false;
 }

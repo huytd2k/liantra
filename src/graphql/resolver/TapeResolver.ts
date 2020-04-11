@@ -3,7 +3,7 @@ import { TapeInput } from './../type/input/TapeInput';
 import { CreateTapeResponse } from './../type/response/CreateTapeResponse';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, UseMiddleware, Authorized } from "type-graphql";
 import { Tape } from '../../model/Tape';
 import { TapeService } from '../../service/TapeService';
 import TYPES from '../../types';
@@ -23,12 +23,13 @@ export class TapeResolver implements Resolver{
     async tape(@Arg("title") title :string) : Promise<Tape[]> {
         return await this.tapeService.findTapebyTitle(title);
     }
+    @Authorized("ADMIN")
     @Mutation(() => Boolean)
     async delete(@Arg("id") id: number)  {
         const result = await this.tapeService.deleteTapeById(id);
         return result;
-        return false;
     }
+    @Authorized("ADMIN")
     @Mutation(() => CreateTapeResponse) 
     async add(@Arg("tape") tape: TapeInput) : Promise<CreateTapeResponse> {
        try {

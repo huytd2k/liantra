@@ -11,13 +11,8 @@ export class AuthService{
     public async login(username: string, password: string) {
         
             const foundUser = await this.userService.findUserbyUsername(username);
-            console.log(foundUser);
             if(foundUser.checkHashedPwdIsValid(password)) {
-                    return jwt.sign({
-                        "userId": foundUser._id,
-                        "username": foundUser.username,
-                        "password": foundUser.password,
-                    }, "Secret", {expiresIn: "1h"});
+                return foundUser;
                 }
             else {
                 throw Error("Invalid Identiy")

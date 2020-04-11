@@ -8,9 +8,9 @@ export class CreateTapeResponse implements IResponse{
     @Field()
     isOk!: boolean;
     
-    @Field()
+    @Field({nullable: true})
     error?: string;
     
-    @Field(()=> Tape)
+    @Field(()=> Tape, {nullable: true})
     tapeInfo?: Tape;
 }

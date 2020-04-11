@@ -30,15 +30,16 @@ export class UserRepositoryImpPg  implements UserRepository {
   	return await this.userRepositoryFromTypeOrm.find();
   }
   public async create (userDTO: UserDTO): Promise<UserDTO> {
-  	const existedUser = await this.userRepositoryFromTypeOrm.findOne({ username: userDTO.username })
+    const existedUser = await this.userRepositoryFromTypeOrm.findOne({ username: userDTO.username })
   	if (existedUser) {
   		throw Error("invalid username!")
-  	}
+    }
   	return await this.userRepositoryFromTypeOrm.save(userDTO);
   }
 
   public async findUserByUsername (queryUsername: string): Promise<UserDTO> {
-  	return await this.userRepositoryFromTypeOrm.findOneOrFail({username: queryUsername});
+   const resUser  = await this.userRepositoryFromTypeOrm.findOneOrFail({username: queryUsername});
+    return resUser;
   }
   
   public async deleteUser (userDTO: UserDTO): Promise<DeleteResult> {

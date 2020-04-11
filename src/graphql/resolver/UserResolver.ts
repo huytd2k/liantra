@@ -1,16 +1,13 @@
-import { Auth } from './../../middleware/Auth';
-import { session } from 'express-session';
-import { ApolloContext } from './../type/apollo.context';
 import { inject, injectable } from 'inversify';
-import { Arg, Mutation, Query, Resolver, Ctx, UseMiddleware } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import TYPES from '../../types';
 import { RegisterUserInput } from '../type/input/UserInput';
 import { RegisterReponse } from '../type/response/RegisterReponse';
+import { Auth } from './../../middleware/Auth';
 import { ROLE } from './../../model/Role';
 import { User } from './../../model/User';
 import { UserService } from './../../service/UserService';
-import { type } from 'os';
-import jwt from 'jsonwebtoken'
+import { ApolloContext } from './../type/apollo.context';
 @injectable()
 @Resolver()
 export class UserResolver {
@@ -20,22 +17,20 @@ export class UserResolver {
         return await this.userService.getAllUser()
     }
     @Mutation(() => RegisterReponse)
-    async register(@Arg("userInput") userInput: RegisterUserInput, @Ctx() ctx : ApolloContext): Promise<RegisterReponse> {
-
+    async register(@Arg("userInput") userInput: RegisterUserInput, @Ctx() context: ApolloContext): Promise<RegisterReponse> {
         try {
             const user = new User(userInput.username, userInput.password, ROLE.member, userInput.email);
             await user.hashPassword();
             const resUser: User = await this.userService.createUser(user);
-            const token = await jwt.sign({uid : user._id},"secret",{expiresIn: "1h"});
-            ctx.req.session!.token = token;
-            ctx.req.session!.uid = user._id;
+            context.req.session!.userRole = resUser.role;
+            context.req.session!.userId = resUser._id;
             return {
                 isOk: true,
-                userInfo: resUser
+                userInfo: resUser,
             }
-            
 
-        } catch(err) {
+
+        } catch (err) {
             return {
                 isOk: false,
                 error: err.message,
@@ -43,13 +38,13 @@ export class UserResolver {
         }
     }
     @UseMiddleware(Auth)
-    @Query( type => User ) 
-    async me(@Ctx() ctx : ApolloContext) : Promise<User>{
+    @Query(type => User)
+    async me(@Ctx() ctx: ApolloContext): Promise<User> {
         try {
             const user = await this.userService.findUserById(ctx.req.session!.uid);
             return user
-        } 
-        catch(err) {
+        }
+        catch (err) {
             throw new Error(err.message);
         }
     }
