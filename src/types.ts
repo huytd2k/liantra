@@ -10,5 +10,6 @@ const TYPES = {
 	CheckRole: Symbol("CheckRole"),
 	TapeResolver: Symbol("TapeResolver"),
 	Connection: Symbol("Connection"),
+	TagRepository: Symbol("TagRepository")
 };
 export default TYPES;

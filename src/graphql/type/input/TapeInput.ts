@@ -18,4 +18,7 @@ export class TapeInput {
     
     @Field(type => Int)
     level!: number;
+
+    @Field()
+    tags!: string;
 }

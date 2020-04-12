@@ -1,4 +1,4 @@
-import { customAuthChecker } from './middleware/Auth';
+import { customAuthChecker } from './middleware/customAuthChecker';
 import { ApolloServer } from 'apollo-server-express';
 import bodyParser from "body-parser";
 import * as dotenv from "dotenv";
@@ -13,6 +13,9 @@ import myContainer from "./inversify.config";
 import redis from 'redis';
 import redisConnector from 'connect-redis';
 import session from 'express-session';
+import { User } from './model/User';
+import { Tape } from './model/Tape';
+import { Tag } from './model/Tag';
 
 const cors = require("cors");
 const app = express();
@@ -37,7 +40,18 @@ app.use(
 dotenv.config();
 
 (async () => {
-    await createConnection();
+    await createConnection(
+        {
+            "type": "postgres",
+            "host": "localhost",
+            "port": 5432,
+            "username": "postgres",
+            "password": "huy221100",
+            "database": "liantra",
+            "entities": [User, Tape, Tag],
+            "synchronize": true
+         }
+    );
     const apolloServer = new ApolloServer({
         schema: await buildSchema(
             {

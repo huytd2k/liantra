@@ -1,60 +1,51 @@
-import { TapeDTO } from "./../model/TapeDTO";
-import { TapeRepository } from "./../repository/TapeRepository";
-import { Tape } from "./../model/Tape";
-import { injectable, inject } from "inversify";
+import { TagReposiory } from './../repository/TagRepository';
+import { inject, injectable } from "inversify";
+import { DeleteResult } from "typeorm";
 import TYPES from "../types";
-import { DeleteResult, DeleteQueryBuilder } from "typeorm";
+import { Tape } from "./../model/Tape";
+import { TapeRepository } from "./../repository/TapeRepository";
+import { Tag } from '../model/Tag';
 
 export interface TapeService {
-  getAllTape(): Promise<Tape[]>;
-  createTape(tape: Tape): Promise<Tape>;
-  findTapebyTitle(titleQuery: string): Promise<Tape[]>;
-  findTapebyId(id: string) : Promise<Tape>;
-  deleteTapeById(id: number): Promise<DeleteResult> ;
+    getAllTape(): Promise<Tape[]>;
+    createTape(tape: Tape): Promise<Tape>;
+    findTapebyTitle(titleQuery: string): Promise<Tape[]>;
+    findTapebyId(id: string): Promise<Tape>;
+    deleteTapeById(id: number): Promise<DeleteResult>;
+    findTapeByTag(tagName: string): Promise<Tape[]>
 }
 
 @injectable()
 export class TapeServiceImpl implements TapeService {
-    @inject(TYPES.TapeRepository) private tapeRepository! : TapeRepository;
+    @inject(TYPES.TapeRepository) private tapeRepository!: TapeRepository;
+    @inject(TYPES.TagRepository) private tagRepository!: TagReposiory;
     public async getAllTape(): Promise<Tape[]> {
-        const foundDTO = await this.tapeRepository.getAll()
-        return foundDTO.map(dto => this.dtoToTape(dto))
+        return await this.tapeRepository.getAll()
     }
     public async createTape(tape: Tape): Promise<Tape> {
-        const tapeDTO = this.tapeToDTO(tape);
-        const returnDTO = await this.tapeRepository.createTape(tapeDTO);
-        return this.dtoToTape(returnDTO)
+        tape.tags.forEach(async tag => {
+            let foundTag = await this.tagRepository.findTag(tag.tagName);
+            if (foundTag === undefined) {
+                await this.tagRepository.createTag(tag);
+            }
+            else {
+                tag.id = foundTag!.id;
+            }
+        })
+
+        return await this.tapeRepository.createTape(tape);
     }
-    public async findTapebyId(id: string) : Promise<Tape> {
-        const foundDTO = await this.tapeRepository.findTapeById(id);
-        return this.dtoToTape(foundDTO);
+    public async findTapebyId(id: string): Promise<Tape> {
+        return await this.tapeRepository.findTapeById(id);
     }
     public async findTapebyTitle(titleQuery: string): Promise<Tape[]> {
-            const foundDtos = await this.tapeRepository.findTapeByTitle(titleQuery)
-            const tapes = foundDtos.map((dto) => this.dtoToTape(dto));
-            return tapes}
-        
+        return await this.tapeRepository.findTapeByTitle(titleQuery)
+    }
+
     public async deleteTapeById(id: number): Promise<DeleteResult> {
         return await this.tapeRepository.deleteTapebyId(id)
     }
-    public dtoToTape(tapeDTO : TapeDTO) : Tape{
-        return {
-            id: tapeDTO.id,
-            title: tapeDTO.title,
-            level: tapeDTO.level,
-            description: tapeDTO.description,
-            script: tapeDTO.script,
-            ytUrl: tapeDTO.ytUrl
-        }
-    }
-public tapeToDTO(tape : Tape) {
-        return {
-            id: tape.id,
-            title: tape.title,
-            level: tape.level,
-            description: tape.description,
-            script: tape.script,
-            ytUrl: tape.ytUrl
-        }
+    public async findTapeByTag(tag: string): Promise<Tape[]> {
+        return await this.tapeRepository.findTapeByTag(tag);
     }
 }

@@ -1,3 +1,4 @@
+import { TagReposiory, TagRepositoryImpl } from './repository/TagRepository';
 import { Container } from "inversify";
 import { AuthResoler } from './graphql/resolver/AuthResolver';
 import { TapeResolver } from './graphql/resolver/TapeResolver';
@@ -25,4 +26,5 @@ myContainer.bind<TapeRepository>(TYPES.TapeRepository).to(TapeRepositoryImpPg);
 myContainer.bind<TapeService>(TYPES.TapeService).to(TapeServiceImpl);
 myContainer.bind<UserRepository>(TYPES.UserRepository).to(UserRepositoryImpPg);
 myContainer.bind<UserService>(TYPES.UserService).to(UserServiceIpml);
+myContainer.bind<TagReposiory>(TYPES.TagRepository).to(TagRepositoryImpl);
 export default myContainer;

@@ -1,12 +1,13 @@
-import { ValidateTapeArgs } from './../../middleware/ValidateTapeArgs';
-import { TapeInput } from './../type/input/TapeInput';
-import { CreateTapeResponse } from './../type/response/CreateTapeResponse';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { Arg, Mutation, Query, Resolver, UseMiddleware, Authorized } from "type-graphql";
+import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
+import { Tag } from '../../model/Tag';
 import { Tape } from '../../model/Tape';
-import { TapeService } from '../../service/TapeService';
 import TYPES from '../../types';
+import { convertTags } from '../../util/convertTags';
+import { TapeService } from './../../service/TapeService';
+import { TapeInput } from './../type/input/TapeInput';
+import { CreateTapeResponse } from './../type/response/CreateTapeResponse';
 
 @Resolver()
 @injectable()
@@ -15,8 +16,11 @@ export class TapeResolver implements Resolver{
     @Query(() => [Tape])
     async tapes() {
         const found = await this.tapeService.findTapebyTitle("");
-        console.log(found);
         return found
+    }
+    @Query(() => [Tape])
+    async findByTag(@Arg("tagName") tagName: string) : Promise<Tape[]> {
+        return await this.tapeService.findTapeByTag(tagName);
     }
 
     @Query(() => [Tape])
@@ -29,10 +33,11 @@ export class TapeResolver implements Resolver{
         const result = await this.tapeService.deleteTapeById(id);
         return result;
     }
-    @Authorized("ADMIN")
     @Mutation(() => CreateTapeResponse) 
-    async add(@Arg("tape") tape: TapeInput) : Promise<CreateTapeResponse> {
+    async add(@Arg("tape") tapeInput: TapeInput) : Promise<CreateTapeResponse> {
        try {
+           const convertedTag : Tag[] = convertTags(tapeInput.tags);
+           const tape = new Tape(tapeInput.title,tapeInput.ytUrl,tapeInput.level,tapeInput.description,convertedTag, tapeInput.script);
            const resTape = await this.tapeService.createTape(tape);
            return {
                isOk: true,
@@ -45,6 +50,7 @@ export class TapeResolver implements Resolver{
            }
        }
     }
+    
 }
 export interface Resolver {
 

@@ -15,7 +15,6 @@ export class CheckRole {
             const username :string = res.locals.jwtPayload.username;
             try {
             const foundUserFromRepo = await this.userService.findUserbyUsername(username); //* Get an user domain object with locals username
-            console.log("CheckRole -> foundUserFromRepo", foundUserFromRepo)
             if ( roles.indexOf( foundUserFromRepo.role) > -1) { //* check if user role in required roles
                     next();
                 }
