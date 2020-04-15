@@ -1,3 +1,5 @@
+import { TagToTape } from './model/TagToTape';
+import { createTagsLoader } from './util/createDataLoader';
 import { customAuthChecker } from './middleware/customAuthChecker';
 import { ApolloServer } from 'apollo-server-express';
 import bodyParser from "body-parser";
@@ -6,8 +8,8 @@ import express from "express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from 'typeorm';
-import { AuthResoler } from './graphql/resolver/AuthResolver';
-import { TapeResolver } from './graphql/resolver/TapeResolver';
+import { AuthResolver } from './graphql/resolver/AuthResolver';
+import { TapeResolver } from './graphql/resolver/TapeTagResolver';
 import { UserResolver } from './graphql/resolver/UserResolver';
 import myContainer from "./inversify.config";
 import redis from 'redis';
@@ -24,10 +26,11 @@ const RedisStore = redisConnector(session);
 RedisClient.on("error", function(error : any) {
   console.error(error);
 });
-
-app.use("*", cors());
+const corsOption = {
+    credential: true,
+}
+app.use(cors(corsOption));
 app.use(bodyParser());
-app.options("*", cors()); // include before other routes
 app.use(
     session(
         {
@@ -37,9 +40,11 @@ app.use(
         }
     )
 )
+
 dotenv.config();
 
 (async () => {
+
     await createConnection(
         {
             "type": "postgres",
@@ -48,22 +53,25 @@ dotenv.config();
             "username": "postgres",
             "password": "huy221100",
             "database": "liantra",
-            "entities": [User, Tape, Tag],
+            "entities": [User, Tape, Tag, TagToTape],
             "synchronize": true
          }
     );
+
     const apolloServer = new ApolloServer({
         schema: await buildSchema(
             {
-                resolvers: [TapeResolver, UserResolver, AuthResoler],
+                resolvers: [TapeResolver, UserResolver, AuthResolver],
                 container: myContainer,
-                authChecker: customAuthChecker,             // globalMiddlewares: [ErrorBlocking],
+                authChecker: customAuthChecker,   
+                 // globalMiddlewares: [ErrorBlocking],
             }
         ),
-        context: ({req, res}) => ({req, res})
+        context: ({req, res}) => ({req, res, tagsLoader: createTagsLoader()})
     });
+
     apolloServer.applyMiddleware({app});
-    app.listen(3000, () => console.log("Listenging"));
+    app.listen(8000, () => console.log("Listenging"));
 })();
 
 

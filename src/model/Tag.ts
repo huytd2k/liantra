@@ -1,27 +1,33 @@
-import { Field, Int } from 'type-graphql';
-import { ObjectType } from 'type-graphql';
-import { Tape } from '../model/Tape';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Field, Int, ObjectType } from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
+import { TagToTape } from "./TagToTape";
 
 @ObjectType()
-@Entity('tag')
-export class Tag {
-    @PrimaryGeneratedColumn()
-    @Field(type => Int)
-    id!: number;
+@Entity()
+@Unique(["tagName"])
+export class Tag extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  @Field((type) => Int)
+  tagId!: number;
 
-    @Field()
-    @Column()
-    tagName!: string;
+  @Field()
+  @Column()
+  tagName!: string;
 
-    
-    
-    @ManyToMany(type => Tape, tape => tape.id) 
-    @Field(type => Tape)
-    @JoinTable()
-    tapeid!: Tape[];
+  @OneToMany(() => TagToTape, (tagToTape) => tagToTape.tag)
+  @JoinColumn()
+  tapeConnection!: Promise<TagToTape[]>;
 
-    constructor(tagName: string) {
-        this.tagName = tagName;
-    }
+  constructor(name: string) {
+    super();
+    this.tagName = name;
+  }
 }

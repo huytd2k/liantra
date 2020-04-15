@@ -7,16 +7,15 @@ import { AuthService } from './../../service/AuthService';
 import { ApolloContext } from './../type/apollo.context';
 @Resolver()
 @injectable()
-export class AuthResoler {
+export class AuthResolver {
     @inject(TYPES.AuthService) private authService!: AuthService;
     @Mutation(() => LoginResponse)
     public async login(@Arg("userInput") userInput: RegisterUserInput, @Ctx() context: ApolloContext): Promise<LoginResponse> {
         const { username, password } = userInput;
-
         try {
             const foundUser  = await this.authService.login(username, password);
             context.req.session!.userRole =  foundUser.role;
-            context.req.session!.userId = foundUser._id;
+            context.req.session!.userId = foundUser.id;
             return {
                 isOk: true,
             }

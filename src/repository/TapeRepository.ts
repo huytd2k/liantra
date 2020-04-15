@@ -10,7 +10,6 @@ export interface TapeRepository {
 	createTape(tape: Tape): Promise<Tape>;
 	deleteTapebyId(queryId: number): Promise<DeleteResult>;
 	updateTape(tape: Tape): Promise<Tape>;
-	findTapeByTag(tag: string): Promise<Tape[]>
 }
 @injectable()
 export class TapeRepositoryImpPg implements TapeRepository {
@@ -49,17 +48,6 @@ export class TapeRepositoryImpPg implements TapeRepository {
 			.where("LOWER(title) like :title", { title: '%' + queryString.toLowerCase() + '%' })
 			.getMany();
 		return foundDTO;
-	}
-	public async findTapeByTag(tagName: string) {
-		try	{
-			const tag = await this.tagRepositoryFromTypeOrm.createQueryBuilder("tag").leftJoinAndSelect("tag.tapeid", "tape").where("tag.tagName = :tag", { tag: tagName }).getMany()
-			console.log(tag);
-			throw new Error("asdads");
-		}
-		catch(err) {
-			throw new Error(err.message);
-		}
-
 	}
 
 }

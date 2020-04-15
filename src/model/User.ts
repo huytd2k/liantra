@@ -1,47 +1,54 @@
 import { ROLE } from './Role';
-import * as bcrypt from 'bcryptjs';
-import {Length , IsNotEmpty,} from "class-validator";
-import { InputType, Field, ObjectType } from 'type-graphql';
-import 'reflect-metadata'
-import { Entity, PrimaryColumn, Column, PrimaryGeneratedColumn } from 'typeorm';
+import * as bcrypt from "bcryptjs";
+import { IsNotEmpty, Length } from "class-validator";
+import "reflect-metadata";
+import { Field, ObjectType } from "type-graphql";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 @ObjectType()
-@Entity('user')
-export class User{ //* Domain class
-    @PrimaryGeneratedColumn()
-    _id!: string;
+@Entity("user")
+@Unique(["username","email"])
+export class User extends BaseEntity {
+  //* Domain class
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Field()
-    @Length(6,20)
-    @IsNotEmpty()
-    @Column()
-    username: string;
+  @Field()
+  @Length(6, 20)
+  @IsNotEmpty()
+  @Column()
+  username!: string;
 
-    @IsNotEmpty()
-    @Column()
-    password: string;
+  @IsNotEmpty()
+  @Column()
+  password!: string;
 
-    @IsNotEmpty()
-    @Field()
-    @Column()
-    email: string | "";
+  @IsNotEmpty()
+  @Field()
+  @Column()
+  email!: string | "";
 
-    @IsNotEmpty()
-    @Column()
-    role!: string;
+  @IsNotEmpty()
+  @Column()
+  role!: string;
 
-    constructor(username: string, password: string, role: ROLE | undefined, email: string) {
-        this.username = username;
-        this.password = password;
-        this.role = role || ROLE.unknown;
-        this.email = email;
+  async hashPassword() {
+    const hashedPwd = await bcrypt.hashSync(this.password);
+    this.password = hashedPwd;
+  }
 
-    };
-    async hashPassword() {
-        const hashedPwd =  await bcrypt.hashSync(this.password);
-        this.password = hashedPwd;
-    } 
-    checkHashedPwdIsValid(uncryptedPwd: string) {
-        return bcrypt.compareSync(uncryptedPwd, this.password);
+  checkHashedPwdIsValid(uncryptedPwd: string) {
+    return bcrypt.compareSync(uncryptedPwd, this.password);
+  }
 
-    }
-};
+  constructor(
+    username : string,
+    password : string,
+    email : string ,
+  ) {
+    super();
+    this.username = username,
+    this.password = password,
+    this.email = email
+    this.role = ROLE.member 
+  }
+}

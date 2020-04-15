@@ -1,73 +1,56 @@
-import { UserDTO } from "./../model/UserDTO";
-import { UserRepository } from "./../repository/UserRepository";
-import { User } from "./../model/User";
-import { injectable, inject } from "inversify";
-import TYPES from "../types";
+import { injectable } from "inversify";
 import { DeleteResult } from "typeorm";
+import { User } from "./../model/User";
 
 export interface UserService {
   getAllUser(): Promise<User[]>;
   createUser(user: User): Promise<User>;
   findUserbyUsername(username: string): Promise<User>;
-  deleteUser(id: string): Promise<DeleteResult> ;
-  findUserById(id: string): Promise<User>;
+  deleteUser(id: number): Promise<DeleteResult>;
+  findUserById(id: number): Promise<User>;
 }
 @injectable()
 export class UserServiceIpml implements UserService {
-  @inject(TYPES.UserRepository) private userRepository! : UserRepository;
-  
-  public async findUserById(id: string) : Promise<User> {
-    const foundDto = await this.userRepository.findUserById(id);
-    return this.dtoToUser(foundDto);
-  }  
-
+  public async findUserById(id: number): Promise<User> {
+    try {
+      return await User.findOneOrFail({ id: id });
+    } catch (error) {
+      throw new Error("No user found!");
+    }
+  }
 
   public async findUserbyUsername(username: string): Promise<User> {
-    const foundUserDTO = await this.userRepository.findUserByUsername(username);
-    return this.dtoToUser(foundUserDTO); //* Convert   }
-    
+    try {
+      return await User.findOneOrFail({ username: username });
+    } catch (err) {
+      throw new Error("No UserFound!" + err.message);
+    }
   }
-  
+
   public async getAllUser(): Promise<User[]> {
-        const userDtoFromRepo = await this.userRepository.getAll();
-        const users = userDtoFromRepo.map((userDTO: UserDTO) =>
-          this.dtoToUser(userDTO)
-        );
-        return await users;
-
+    try {
+      return await User.find();
+    }
+    catch(err) {
+      throw new Error(err.message);
+    }
   }
-  
-  
+
   public async createUser(user: User): Promise<User> {
-        const userDto = this.userToDTO(user);
-        const resUserDTO = await this.userRepository.create(userDto)
-        return this.dtoToUser(resUserDTO);
+    const tryFindUser = await User.find({username: user.username});
+    if(tryFindUser.length === 0 ) {
+      return await User.save(user);
+    }
+    throw new Error("Username has existed!"); 
   }
-  
-  public async deleteUser(id: string): Promise<DeleteResult> {
-      const foundUserById = await this.userRepository.findUserById(id);
-      try {
-        return this.userRepository.deleteUser(foundUserById);
-      }
-      catch {
-        throw Error("Unable to delete!")
-      }
-  }  
 
-  public dtoToUser(userDTO: UserDTO): User {
-    return new User(userDTO.username, userDTO.password, userDTO.role, userDTO.email);
+  public async deleteUser(id: number): Promise<DeleteResult> {
+    try {
+      const foundUser = await User.findOneOrFail({id: id});
+      return await User.delete(foundUser);
+    }
+    catch(err) {
+      throw new Error(err.message);
+    }
   }
-  
-  
-  public userToDTO(user: User): UserDTO {
-    return {
-      username: user.username,
-      password: user.password,
-      role: user.role,
-      email: user.email
-    };
-
-
-
-}
 }

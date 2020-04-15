@@ -1,23 +1,29 @@
-import { TagReposiory, TagRepositoryImpl } from './repository/TagRepository';
 import { Container } from "inversify";
-import { AuthResoler } from './graphql/resolver/AuthResolver';
-import { TapeResolver } from './graphql/resolver/TapeResolver';
-import { UserResolver } from './graphql/resolver/UserResolver';
-import { CheckRole } from "./middleware/CheckRole";
+import { AuthResolver } from "./graphql/resolver/AuthResolver";
 import { LogAccess } from "./middleware/Test";
-import { ValidateTapeArgs } from './middleware/ValidateTapeArgs';
-import { TapeRepository, TapeRepositoryImpPg } from "./repository/TapeRepository";
-import { UserRepository, UserRepositoryImpPg } from "./repository/UserRepository";
+import { TapeResolver } from "./graphql/resolver/TapeTagResolver";
+import { UserResolver } from "./graphql/resolver/UserResolver";
+import { ValidateTapeArgs } from "./middleware/ValidateTapeArgs";
 import { AuthService } from "./service/AuthService";
-import { TapeService, TapeServiceImpl } from "./service/TapeService";
-import { UserService, UserServiceIpml } from "./service/UserService";
 import TYPES from "./types";
+import { CheckRole } from "./middleware/CheckRole";
+import {
+  TapeRepository,
+  TapeRepositoryImpPg,
+} from "./repository/TapeRepository";
+import { TapeService, TapeServiceImpl } from "./service/TapeService";
+import {
+  UserRepository,
+  UserRepositoryImpPg,
+} from "./repository/UserRepository";
+import { UserService, UserServiceIpml } from "./service/UserService";
+import { TagReposiory, TagRepositoryImpl } from "./repository/TagRepository";
 
 const myContainer = new Container();
 
-myContainer.bind(AuthResoler).toSelf().inSingletonScope();
-myContainer.bind(LogAccess).toSelf()
-myContainer.bind(TapeResolver).toSelf().inSingletonScope();
+myContainer.bind(AuthResolver).toSelf().inSingletonScope();
+myContainer.bind(LogAccess).toSelf();
+myContainer.bind(TapeResolver).toSelf().inSingletonScope()  ;
 myContainer.bind(UserResolver).toSelf().inSingletonScope();
 myContainer.bind(ValidateTapeArgs).toSelf().inSingletonScope();
 myContainer.bind<AuthService>(TYPES.AuthService).to(AuthService);

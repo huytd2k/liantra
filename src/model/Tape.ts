@@ -1,58 +1,64 @@
-import { IsNotEmpty , Contains } from "class-validator";
-import { ObjectType, Field } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn, JoinTable, PrimaryColumn } from 'typeorm';
-import { Tag } from "./Tag";
-
+import { Contains, IsNotEmpty } from "class-validator";
+import { Ctx, Field, ObjectType } from "type-graphql";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ApolloContext } from './../graphql/type/apollo.context';
+import { Tag } from './Tag';
+import { TagToTape } from "./TagToTape";
 
 @ObjectType()
-@Entity('tape')
-export class Tape {
-    constructor(
-        title: string,
-        ytUrl: string,
-        level : number,
-        description:  string,
-        tags: Tag[],        
-        script: string,
-        ) {
-            this.title = title;
-            this.ytUrl = ytUrl;
-            this.level = level;
-            this.description = description;
-            this.tags = tags;
-            this.script = script
-    }
-    @Field()
-    @PrimaryGeneratedColumn()
-    id?: string;
+@Entity()
+export class Tape extends BaseEntity {
+  @Field()
+  @PrimaryGeneratedColumn()
+  tapeId!: number;
 
-    @Field()
-    @IsNotEmpty()
-    @PrimaryColumn()
-    title!: string;
-    
+  @Field()
+  @IsNotEmpty()
+  @Column()
+  title!: string;
 
-    @Field()
-    @Contains("youtube.com")
-    @Column()
-    ytUrl!: string;
-    
-    @Field()
-    @Column()
-    level!: number;
+  @Field()
+  @Contains("youtube.com")
+  @Column()
+  ytUrl!: string;
 
-    @Field()
-    @Column()
-    description!: string;
-    
-    tagString!: string;
-    @Field(type => Tag, {nullable: true})
-    @ManyToMany(type => Tag, tag => tag.tagName, {cascade: true})
-    @JoinTable()
-    tags!: Tag[];
-    
-    @Field()
-    @Column()
-    script!: string;
+  @Field()
+  @Column()
+  level!: number;
+
+  @Field()
+  @Column()
+  description!: string;
+
+  tagString!: string;
+
+  @Field()
+  @Column()
+  script!: string;
+
+  @JoinColumn()
+  @OneToMany(() => TagToTape, (tagToTape) => tagToTape.tape)
+  tagConnection!: Promise<TagToTape[]>;
+
+  @Field(() => [Tag])
+  async tags(@Ctx() {tagsLoader}: ApolloContext): Promise<Tag[]> {
+      return await tagsLoader.load(this.tapeId)
+  }
+
+  constructor(
+    tlt: string,
+    url: string,
+    lv: number,
+    des: string,
+    tagString: string,
+    script: string
+  ) {
+    super();
+    this.title = tlt;
+    this.ytUrl = url;
+    this.level = lv;
+    this.description = des;
+    this.tagString = tagString;
+    this.script = script;
+  }
 }
-

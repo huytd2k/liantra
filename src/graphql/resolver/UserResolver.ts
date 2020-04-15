@@ -18,17 +18,15 @@ export class UserResolver {
     @Mutation(() => RegisterReponse)
     async register(@Arg("userInput") userInput: RegisterUserInput, @Ctx() context: ApolloContext): Promise<RegisterReponse> {
         try {
-            const user = new User(userInput.username, userInput.password, ROLE.member, userInput.email);
+            const user = new User(userInput.username, userInput.password, userInput.email);
             await user.hashPassword();
             const resUser: User = await this.userService.createUser(user);
             context.req.session!.userRole = resUser.role;
-            context.req.session!.userId = resUser._id;
+            context.req.session!.userId = resUser.id;
             return {
                 isOk: true,
                 userInfo: resUser,
             }
-
-
         } catch (err) {
             return {
                 isOk: false,
@@ -39,7 +37,7 @@ export class UserResolver {
     @Query(type => User)
     async me(@Ctx() ctx: ApolloContext): Promise<User> {
         try {
-            const user = await this.userService.findUserById(ctx.req.session!.uid);
+            const user = await this.userService.findUserById(ctx.req.session!.userId);
             return user
         }
         catch (err) {
