@@ -27,7 +27,8 @@ RedisClient.on("error", function(error : any) {
   console.error(error);
 });
 const corsOption = {
-    credential: true,
+    origin: "http://localhost:3000",
+    credentials: true,
 }
 app.use(cors(corsOption));
 app.use(bodyParser());
@@ -67,11 +68,12 @@ dotenv.config();
                  // globalMiddlewares: [ErrorBlocking],
             }
         ),
-        context: ({req, res}) => ({req, res, tagsLoader: createTagsLoader()})
+        context: ({req, res}) => ({req, res, tagsLoader: createTagsLoader()}),
+        
     });
 
-    apolloServer.applyMiddleware({app});
-    app.listen(8000, () => console.log("Listenging"));
+    apolloServer.applyMiddleware({app, cors: corsOption});
+    app.listen(8000, () => console.log("Listening"));
 })();
 
 
