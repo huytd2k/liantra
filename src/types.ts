@@ -10,6 +10,8 @@ const TYPES = {
 	CheckRole: Symbol("CheckRole"),
 	TapeResolver: Symbol("TapeResolver"),
 	Connection: Symbol("Connection"),
-	TagRepository: Symbol("TagRepository")
+	TagRepository: Symbol("TagRepository"),
+	SessionResolver: Symbol("SessionResolver"),
+	SessionService: Symbol("SessionService"),
 };
 export default TYPES;

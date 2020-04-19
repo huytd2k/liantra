@@ -1,3 +1,4 @@
+import { SessionResolver } from './graphql/resolver/SessionResolver';
 import { TagToTape } from './model/TagToTape';
 import { createTagsLoader } from './util/createDataLoader';
 import { customAuthChecker } from './middleware/customAuthChecker';
@@ -18,6 +19,7 @@ import session from 'express-session';
 import { User } from './model/User';
 import { Tape } from './model/Tape';
 import { Tag } from './model/Tag';
+import { Session } from './model/Session';
 
 const cors = require("cors");
 const app = express();
@@ -54,15 +56,16 @@ dotenv.config();
             "username": "postgres",
             "password": "huy221100",
             "database": "liantra",
-            "entities": [User, Tape, Tag, TagToTape],
-            "synchronize": true
+            "entities": [User, Tape, Tag, TagToTape, Session],
+            "synchronize": true,
+            "logging": true
          }
     );
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema(
             {
-                resolvers: [TapeResolver, UserResolver, AuthResolver],
+                resolvers: [TapeResolver, UserResolver, AuthResolver, SessionResolver],
                 container: myContainer,
                 authChecker: customAuthChecker,   
                  // globalMiddlewares: [ErrorBlocking],

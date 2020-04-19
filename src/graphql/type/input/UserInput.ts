@@ -1,7 +1,8 @@
 import { User } from '../../../model/User';
-import { InputType, Field } from "type-graphql";
+import { InputType, Field, ArgsType, Int } from "type-graphql";
 import { IsEmail } from 'class-validator';
 import 'reflect-metadata'
+import { type } from 'os';
 interface UserInput {
     username: string;
     password: string
@@ -33,3 +34,9 @@ export class LoginUserInput implements UserInput {
 
 }
 
+@ArgsType()
+export class UserIdInput {
+    @Field(type => Int)
+    userId!: number;
+
+}

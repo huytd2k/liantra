@@ -1,14 +1,16 @@
-import { ROLE } from './Role';
 import * as bcrypt from "bcryptjs";
 import { IsNotEmpty, Length } from "class-validator";
 import "reflect-metadata";
-import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Field, ObjectType, Int } from "type-graphql";
+import { BaseEntity, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { ROLE } from './Role';
+import { Session } from './Session';
 @ObjectType()
-@Entity("user")
+@Entity()
 @Unique(["username","email"])
 export class User extends BaseEntity {
   //* Domain class
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -31,6 +33,11 @@ export class User extends BaseEntity {
   @Column()
   role!: string;
 
+
+  @OneToMany(() => Session, (session) => session.user, {eager: true})
+  @JoinColumn()
+  sessions!: Session[];
+
   async hashPassword() {
     const hashedPwd = await bcrypt.hashSync(this.password);
     this.password = hashedPwd;
@@ -46,9 +53,9 @@ export class User extends BaseEntity {
     email : string ,
   ) {
     super();
-    this.username = username,
-    this.password = password,
-    this.email = email
-    this.role = ROLE.member 
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.role = ROLE.member ;
   }
 }
