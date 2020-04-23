@@ -1,3 +1,4 @@
+import { MeReponse } from './../type/response/MeReponse';
 import { inject, injectable } from 'inversify';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import TYPES from '../../types';
@@ -7,6 +8,7 @@ import { ROLE } from './../../model/Role';
 import { User } from './../../model/User';
 import { UserService } from './../../service/UserService';
 import { ApolloContext } from './../type/apollo.context';
+import { MeReponse } from '../type/response/MeReponse';
 @injectable()
 @Resolver()
 export class UserResolver {
@@ -22,26 +24,36 @@ export class UserResolver {
             await user.hashPassword();
             const resUser: User = await this.userService.createUser(user);
             context.req.session!.userRole = resUser.role;
-            context.req.session!.userId = resUser.id;
+            context.req.session!.userId = resUser.userId;
             return {
                 isOk: true,
                 userInfo: resUser,
             }
         } catch (err) {
+            if (err.message == "Username has existed!") return {
+                isOk: false,
+                errCode: 1,
+            }
             return {
                 isOk: false,
                 error: err.message,
             }
         }
     }
-    @Query(type => User)
-    async me(@Ctx() ctx: ApolloContext): Promise<User> {
+    @Query(type => MeReponse, {nullable: true})
+    async me(@Ctx() ctx: ApolloContext): Promise<MeReponse> {
         try {
             const user = await this.userService.findUserById(ctx.req.session!.userId);
-            return user
+            return {
+                isOk: true,
+                user: user
+            }
         }
         catch (err) {
-            throw new Error(err.message);
+            return {
+                isOk: false,
+                user: undefined,
+            }
         }
     }
 }

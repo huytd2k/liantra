@@ -1,6 +1,6 @@
 import { IResponse } from "./IResponse";
 import { User } from "../../../model/User";
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType, Int } from "type-graphql";
 import 'reflect-metadata'
 @ObjectType()
 export class RegisterReponse implements IResponse {
@@ -12,4 +12,7 @@ export class RegisterReponse implements IResponse {
 
     @Field(type => User, {nullable: true})
     userInfo?: User; 
+
+    @Field(type=> Int, {nullable: true})
+    errCode?: number;
 }

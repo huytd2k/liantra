@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/3eb86bf5-e088-4ab0-ba9c-8319e83d5213/resourceGroups/Liantra/providers/Microsoft.Web/sites/liantra",
+    "appService.deploySubpath": ""
+}

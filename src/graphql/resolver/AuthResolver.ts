@@ -15,9 +15,10 @@ export class AuthResolver {
         try {
             const foundUser  = await this.authService.login(username, password);
             context.req.session!.userRole =  foundUser.role;
-            context.req.session!.userId = foundUser.id;
+            context.req.session!.userId = foundUser.userId;
             return {
                 isOk: true,
+                userInfo: foundUser,
             }
         } catch (err) {
             return {

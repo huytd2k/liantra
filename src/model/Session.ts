@@ -25,7 +25,7 @@ export class Session extends BaseEntity {
   userId!: number;
 
   @JoinColumn({name: "userId"})
-  @ManyToOne(() => User, user => user.id)
+  @ManyToOne(() => User, user => user.userId)
   user!: User;
 
   @Column()

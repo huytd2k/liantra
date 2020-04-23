@@ -23,7 +23,8 @@ export interface TapeService {
 export class TapeServiceImpl implements TapeService {
   @inject(TYPES.TapeRepository) private tapeRepository!: TapeRepository;
   public async getAllTape(): Promise<Tape[]> {
-    return Tape.find();
+    const tape = await Tape.find();
+    return tape;
   }
   public async createTape(tape: Tape): Promise<Tape> {
     const resTape = await Tape.save(tape);

@@ -1,6 +1,16 @@
 import { injectable } from "inversify";
 import { InputType, Int, Field } from "type-graphql";
+@InputType()
+class line {
+    @Field()
+    'text': string;
 
+    @Field()
+    'start': number;
+    
+    @Field()
+    'duration': number;
+}
 @InputType()
 export class TapeInput {
     
@@ -13,12 +23,14 @@ export class TapeInput {
     @Field()
     description!: string;
 
-    @Field()
+    @Field(() => [line])
     script!: string;
     
     @Field(type => Int)
     level!: number;
 
-    @Field()
-    tags!: string;
+    // @Field()
+    // tags!: string;
 }
+
+

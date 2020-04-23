@@ -4,6 +4,7 @@ import { BaseEntity, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColu
 import { ApolloContext } from './../graphql/type/apollo.context';
 import { Tag } from './Tag';
 import { TagToTape } from "./TagToTape";
+import {ScriptLine} from './ScriptLine'
 
 @ObjectType()
 @Entity()
@@ -32,9 +33,9 @@ export class Tape extends BaseEntity {
 
   tagString!: string;
 
-  @Field()
-  @Column()
-  script!: string;
+  @Field(() => [ ScriptLine ])
+  @Column({type: "simple-json"})
+  script!: ScriptLine[];
 
   @JoinColumn()
   @OneToMany(() => TagToTape, (tagToTape) => tagToTape.tape)
@@ -50,7 +51,6 @@ export class Tape extends BaseEntity {
     url: string,
     lv: number,
     des: string,
-    tagString: string,
     script: string
   ) {
     super();
@@ -58,7 +58,6 @@ export class Tape extends BaseEntity {
     this.ytUrl = url;
     this.level = lv;
     this.description = des;
-    this.tagString = tagString;
     this.script = script;
   }
 }

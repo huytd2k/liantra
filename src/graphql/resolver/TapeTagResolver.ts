@@ -1,15 +1,12 @@
-import { IResponse } from "./../type/response/IResponse";
 import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
-import { Tag } from "../../model/Tag";
 import { Tape } from "../../model/Tape";
-import TYPES from "../../types";
-import { convertTags } from "../../util/convertTags";
 import { TapeService } from "../../service/TapeService";
+import TYPES from "../../types";
 import { TapeInput } from "../type/input/TapeInput";
-import { CreateTapeResponse } from "../type/response/CreateTapeResponse";
 import { CreateTagResponse } from "../type/response/CreateTagResponse";
+import { CreateTapeResponse } from "../type/response/CreateTapeResponse";
 
 @Resolver()
 @injectable()
@@ -40,13 +37,11 @@ export class TapeResolver implements Resolver {
     @Arg("tape") tapeInput: TapeInput
   ): Promise<CreateTapeResponse> {
     try {
-      const convertedTag: Tag[] = convertTags(tapeInput.tags);
       const tape = new Tape(
         tapeInput.title,
         tapeInput.ytUrl,
         tapeInput.level,
         tapeInput.description,
-        tapeInput.tags,
         tapeInput.script
       );
       const resTape = await this.tapeService.createTape(tape);
@@ -90,6 +85,10 @@ export class TapeResolver implements Resolver {
           error: err.message
         }
       }
+  }
+  @Query(() => Tape)
+  async getTapebyId(@Arg("tapeId") tapeId: number): Promise<Tape> {
+      return await this.tapeService.findTapebyId(tapeId);
   }
 }
 export interface Resolver {}

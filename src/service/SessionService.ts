@@ -17,7 +17,7 @@ interface IcreateSession {
 export class SessionServiceImpl implements SessionService {
     async getAllSession(userId: number): Promise<Session[]> {
         try {
-            const user =  await User.findOneOrFail({id: userId});
+            const user =  await User.findOneOrFail({userId: userId});
             return await user.sessions;
         } catch(err) {
             throw new Error(err);
@@ -26,8 +26,7 @@ export class SessionServiceImpl implements SessionService {
     async createSession({userId, tapeId, score}: IcreateSession): Promise<Session> {
         try {
           const session =  await Session.save(new Session(score,tapeId, userId));
-          const user = await User.findOneOrFail({id: userId})
-          console.log(user);
+          const user = await User.findOneOrFail({userId: userId})
           User.save(user);
           return session;
        } catch (err) {

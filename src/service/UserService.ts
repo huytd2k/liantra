@@ -13,7 +13,7 @@ export interface UserService {
 export class UserServiceIpml implements UserService {
   public async findUserById(id: number): Promise<User> {
     try {
-      return await User.findOneOrFail({ id: id });
+      return await User.findOneOrFail({ userId: id });
     } catch (error) {
       throw new Error("No user found!");
     }
@@ -46,7 +46,7 @@ export class UserServiceIpml implements UserService {
 
   public async deleteUser(id: number): Promise<DeleteResult> {
     try {
-      const foundUser = await User.findOneOrFail({id: id});
+      const foundUser = await User.findOneOrFail({userId: id});
       return await User.delete(foundUser);
     }
     catch(err) {

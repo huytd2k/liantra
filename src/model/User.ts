@@ -12,9 +12,9 @@ export class User extends BaseEntity {
   //* Domain class
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id!: number;
+  userId!: number;
 
-  @Field()
+  @Field({nullable: true})
   @Length(6, 20)
   @IsNotEmpty()
   @Column()
