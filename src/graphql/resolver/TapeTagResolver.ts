@@ -90,5 +90,9 @@ export class TapeResolver implements Resolver {
   async getTapebyId(@Arg("tapeId") tapeId: number): Promise<Tape> {
       return await this.tapeService.findTapebyId(tapeId);
   }
+  @Query(() => [Tape])
+  async getTapeByLevel(@Arg("level") level: number): Promise<Tape[]> {
+      return await this.tapeService.findTapeByLevel(level);
+  }
 }
 export interface Resolver {}

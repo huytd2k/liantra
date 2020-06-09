@@ -17,10 +17,15 @@ export interface TapeService {
   findTapeByTag(tagName: string): Promise<Tape[]>;
   createTag(tagName: string): Promise<Tag>;
   createCnt(tagId: number, tapeId: number): Promise<TagToTape>;
+  findTapeByLevel(level: number): Promise<Tape[]>;
 }
 
 @injectable()
 export class TapeServiceImpl implements TapeService {
+  async findTapeByLevel(level: number): Promise<Tape[]> {
+    const resTapes = await Tape.find({level: level}) || [];
+    return resTapes;
+  }
   @inject(TYPES.TapeRepository) private tapeRepository!: TapeRepository;
   public async getAllTape(): Promise<Tape[]> {
     const tape = await Tape.find();
