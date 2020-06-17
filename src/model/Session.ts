@@ -39,7 +39,7 @@ export class Session extends BaseEntity {
 
   @Column()
   @Field((type) => Int)
-  sessionScore!: number;
+  score!: number;
 
   @CreateDateColumn()
   createdAt!: string;
@@ -47,7 +47,7 @@ export class Session extends BaseEntity {
   constructor(score: number, tapeId: number, userId: number) {
     super();
     this.tapeId = tapeId;
-    this.sessionScore = score;
+    this.score = score;
     this.userId = userId;
   }
 }
