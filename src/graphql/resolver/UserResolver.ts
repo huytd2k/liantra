@@ -8,7 +8,7 @@ import { ROLE } from './../../model/Role';
 import { User } from './../../model/User';
 import { UserService } from './../../service/UserService';
 import { ApolloContext } from './../type/apollo.context';
-import { MeReponse } from '../type/response/MeReponse';
+
 @injectable()
 @Resolver()
 export class UserResolver {

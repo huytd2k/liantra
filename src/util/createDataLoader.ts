@@ -1,5 +1,4 @@
 import { TagToTape } from './../model/TagToTape';
-import { INJECT_TAG } from 'inversify/dts/constants/metadata_keys';
 import { In } from 'typeorm';
 import { Tag } from '../model/Tag';
 import DataLoader, { BatchLoadFn } from 'dataloader';

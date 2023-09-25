@@ -3,7 +3,8 @@ import Express from 'express';
 import { Tag } from '../../model/Tag';
 
 export interface ApolloContext {
-    req: Express.Request,
+    req: any,
     res: Express.Response,
     tagsLoader: DataLoader<number, Tag[], number>,
+    session: any
 }

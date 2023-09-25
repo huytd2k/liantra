@@ -58,6 +58,6 @@ export class Tape extends BaseEntity {
     this.ytUrl = url;
     this.level = lv;
     this.description = des;
-    this.script = script;
+    this.script = (script as any);
   }
 }
